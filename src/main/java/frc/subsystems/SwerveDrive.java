@@ -2,9 +2,11 @@ package frc.subsystems;
 
 
 import com.revrobotics.CANSparkMaxLowLevel;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -255,7 +257,15 @@ public class SwerveDrive extends SubsystemBase implements Consumer<ChassisSpeeds
         module3.unLock();
     }
 
+public Rotation2d getSwerveDriveRotation(){
+        return Rotation2d.fromDegrees(-gyro.getYawContinuous());
+}
 
+
+
+    public SwerveModulePosition[] getSwerveModulePositions() {
+        return new SwerveModulePosition[]{module0.getSwerveModulePosition(),module1.getSwerveModulePosition(),module2.getSwerveModulePosition(),module3.getSwerveModulePosition() };
+    }
 
     @Override
     public void accept(ChassisSpeeds chassisSpeeds) {
