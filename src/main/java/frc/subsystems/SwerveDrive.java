@@ -24,6 +24,7 @@ public class SwerveDrive extends SubsystemBase implements Consumer<ChassisSpeeds
     private SwerveModule module0;           // The four swerve modules
     private SwerveModule module1;
     private SwerveModule module2;
+    private PoseStuff poseStuff;
     private SwerveModule module3;
     private TatorPigeon gyro;
 
@@ -89,7 +90,7 @@ public class SwerveDrive extends SubsystemBase implements Consumer<ChassisSpeeds
         Translation2d module2Pos = new Translation2d(16, 13.5);
         Translation2d module3Pos = new Translation2d(-16, 13.5);
         swerveDriveKinematics = new SwerveDriveKinematics(module0Pos, module1Pos, module2Pos, module3Pos);
-
+        poseStuff = new PoseStuff(this);
 
         inst = NetworkTableInstance.getDefault();
         xVectors = inst.getTable(tableKey).getEntry(xVectorsKey);
@@ -120,6 +121,7 @@ public class SwerveDrive extends SubsystemBase implements Consumer<ChassisSpeeds
 
     public void updateModules() {
         var states = swerveDriveKinematics.toSwerveModuleStates(chassisSpeeds);
+        poseStuff.tick();
         module0.setMotion(states[0]);
         module1.setMotion(states[1]);
         module2.setMotion(states[2]);
@@ -265,6 +267,11 @@ public Rotation2d getSwerveDriveRotation(){
 
     public SwerveModulePosition[] getSwerveModulePositions() {
         return new SwerveModulePosition[]{module0.getSwerveModulePosition(),module1.getSwerveModulePosition(),module2.getSwerveModulePosition(),module3.getSwerveModulePosition() };
+    }
+
+
+    public PoseStuff getPoseStuff() {
+        return poseStuff;
     }
 
     @Override
