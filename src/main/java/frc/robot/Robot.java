@@ -4,9 +4,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.subsystems.PoseStuff;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -52,7 +54,9 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    robotContainer.armDoThings.schedule();
+    robotContainer.teleDrive.schedule();
+    Pose2d pose = robotContainer.getSwerveDrive().getPoseStuff().get();;
+    System.out.println("(" + pose.getX() + "," + pose.getY()+")");
   }
 
   @Override

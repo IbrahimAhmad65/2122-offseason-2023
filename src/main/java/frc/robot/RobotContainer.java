@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.XboxController;
@@ -37,7 +38,9 @@ private OperatorInterface operatorInterface;
     arm = new Arm();
     wrist = new Wrist();
     simWriter = new SimWriter(arm,wrist,claw);
-    teleDrive = new BaseDrive(swerveDrive, operatorInterface::getFieldCentricChassisSpeeds);
+    teleDrive = new BaseDrive(swerveDrive,() -> {
+      return ChassisSpeeds.fromFieldRelativeSpeeds(1,1,0,new Rotation2d(0));
+    });
 
     pickFromChamber = new SequentialCommandGroup(
             new ArmGoToPosition(arm,-Math.PI/2-Math.PI/6,.8),
@@ -59,6 +62,7 @@ private OperatorInterface operatorInterface;
     return Commands.print("No autonomous command configured");
   }
 
-
-
+  public SwerveDrive getSwerveDrive() {
+    return swerveDrive;
+  }
 }
