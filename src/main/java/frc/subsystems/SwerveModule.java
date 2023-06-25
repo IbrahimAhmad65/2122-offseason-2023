@@ -233,7 +233,7 @@ public class SwerveModule {
 
 
     public static double baseSpeed(){
-        return ( 4000);
+        return (1);
     }
 
     @Override
