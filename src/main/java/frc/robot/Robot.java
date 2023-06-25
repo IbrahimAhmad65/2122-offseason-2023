@@ -55,12 +55,21 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     robotContainer.teleDrive.schedule();
-    Pose2d pose = robotContainer.getSwerveDrive().getPoseStuff().get();;
-    System.out.println("(" + pose.getX() + "," + pose.getY()+")");
+//    try {
+
+//    } catch (Exception ignored){
+
+//    }
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    Pose2d pose = robotContainer.getSwerveDrive().getPoseStuff().get();
+
+    System.out.println("(" + pose.getX() + "," + pose.getY()+")");
+
+
+  }
 
   @Override
   public void teleopExit() {}

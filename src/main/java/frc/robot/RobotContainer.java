@@ -32,7 +32,7 @@ private OperatorInterface operatorInterface;
   public SequentialCommandGroup pickFromChamber;
   public RobotContainer() {
 
-    swerveDrive = new SwerveDrive();
+    swerveDrive = new SwerveDrive(this);
     operatorInterface = new OperatorInterface(swerveDrive.getGyro());
     claw = new Claw();
     arm = new Arm();
@@ -41,7 +41,6 @@ private OperatorInterface operatorInterface;
     teleDrive = new BaseDrive(swerveDrive,() -> {
       return ChassisSpeeds.fromFieldRelativeSpeeds(1,1,0,new Rotation2d(0));
     });
-
     pickFromChamber = new SequentialCommandGroup(
             new ArmGoToPosition(arm,-Math.PI/2-Math.PI/6,.8),
             new WristToAngle(wrist,Math.PI),
@@ -65,4 +64,10 @@ private OperatorInterface operatorInterface;
   public SwerveDrive getSwerveDrive() {
     return swerveDrive;
   }
+
+  public SimWriter getSimWriter() {
+    return simWriter;
+  }
+
+
 }

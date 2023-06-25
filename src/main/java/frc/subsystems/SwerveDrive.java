@@ -26,6 +26,7 @@ public class SwerveDrive extends SubsystemBase implements Consumer<ChassisSpeeds
     private SwerveModule module2;
     private PoseStuff poseStuff;
     private SwerveModule module3;
+    private RobotContainer robotContainer;
     private TatorPigeon gyro;
 
     private NetworkTableEntry gyroTable = NetworkTableInstance.getDefault().getTable("visionTable").getEntry("newGyroAngle");//    private AHRS gyro;
@@ -46,7 +47,6 @@ public class SwerveDrive extends SubsystemBase implements Consumer<ChassisSpeeds
 
     private double theta;
     private double currentAngle;
-
     private final double MOTOR_ROTATIONS_PER_MODULE_ROTATION;
     private final double MOTOR_ROTATIONS_PER_WHEEL_ROTATION;
     private final double WHEEL_CIRCUMFERENCE;
@@ -77,21 +77,20 @@ public class SwerveDrive extends SubsystemBase implements Consumer<ChassisSpeeds
     private SwerveDriveKinematics swerveDriveKinematics;
 
     //    private Vision vision;
-    public SwerveDrive(){
+    public SwerveDrive(RobotContainer robotContainer){
         super();
         this.MOTOR_ROTATIONS_PER_WHEEL_ROTATION = SwerveConstants.SwerveModule.MOTOR_ROTATIONS_PER_WHEEL_ROTATION;
         this.MOTOR_ROTATIONS_PER_MODULE_ROTATION = SwerveConstants.SwerveModule.MOTOR_ROTATIONS_PER_MODULE_ROTATION;
         this.WHEEL_CIRCUMFERENCE = SwerveConstants.SwerveModule.WHEEL_CIRCUMFERENCE;
 
 
-
+        this.robotContainer = robotContainer;
         Translation2d module0Pos = new Translation2d(-16, -13.5);
         Translation2d module1Pos = new Translation2d(16, -13.5);
         Translation2d module2Pos = new Translation2d(16, 13.5);
         Translation2d module3Pos = new Translation2d(-16, 13.5);
         swerveDriveKinematics = new SwerveDriveKinematics(module0Pos, module1Pos, module2Pos, module3Pos);
-        poseStuff = new PoseStuff(this);
-
+        System.out.println("here");
         inst = NetworkTableInstance.getDefault();
         xVectors = inst.getTable(tableKey).getEntry(xVectorsKey);
         yVectors = inst.getTable(tableKey).getEntry(yVectorsKey);
@@ -104,7 +103,7 @@ public class SwerveDrive extends SubsystemBase implements Consumer<ChassisSpeeds
         gyro = new TatorPigeon(0, SwerveConstants.SwerveModule.canivoreBusName);
         gyro.zero();
         // Shuffleboard stuff:
-
+        poseStuff = new PoseStuff(this);
     }
 
 
@@ -120,6 +119,7 @@ public class SwerveDrive extends SubsystemBase implements Consumer<ChassisSpeeds
 
 
     public void updateModules() {
+
         var states = swerveDriveKinematics.toSwerveModuleStates(chassisSpeeds);
         poseStuff.tick();
         module0.setMotion(states[0]);
@@ -260,7 +260,10 @@ public class SwerveDrive extends SubsystemBase implements Consumer<ChassisSpeeds
     }
 
 public Rotation2d getSwerveDriveRotation(){
-        return Rotation2d.fromDegrees(-gyro.getYawContinuous());
+        if(SimWriter.sim){
+            return Rotation2d.fromRotations(0);
+        }
+    return Rotation2d.fromDegrees(-gyro.getYawContinuous());
 }
 
 

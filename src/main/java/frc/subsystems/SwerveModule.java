@@ -136,18 +136,16 @@ public class SwerveModule {
     public void setMotion(SwerveModuleState swerveModuleState){
         if(!timer.isRunning()){
             timer.start();
-        } else {
-            double t = timer.restart();
         }
         var mag = swerveModuleState.speedMetersPerSecond;
         var angle = swerveModuleState.angle.getRadians();
         this.angle = angle;
-        this.distance += mag * timer.get();
+        this.distance += mag * timer.restart();
         switch (currentState) {
             case Enabled:
                 if (mag != 0) {
                     direction = canPID.setOptimizedPositionNew(angle);
-                    movementMotor.setVelocity(mag  * direction * baseSpeed());
+                    movementMotor.setVelocity(metersToRotations(mag)  * direction * baseSpeed());
 
                 } else {
                     canPID.setReference(rotationEncoder.getPosition(), CANSparkMax.ControlType.kPosition);
@@ -167,11 +165,12 @@ public class SwerveModule {
     }
 
 
-    public SwerveModuleState getModuleState() {
+    public SwerveModulePosition getSwerveModulePosition() {
         if (sim) {
-            return new SwerveModuleState(distance, new Rotation2d(angle));
+//            System.out.println("distance: " +distance);
+            return new SwerveModulePosition(distance, new Rotation2d(angle));
         }
-        return new SwerveModuleState(rotationsToMeters(movementMotor.getPosition()), new Rotation2d(getCurrentAngle()));
+        return new SwerveModulePosition(rotationsToMeters(movementMotor.getPosition()), new Rotation2d(getCurrentAngle()));
     }
 
     public void printPosition() {
@@ -190,13 +189,12 @@ public class SwerveModule {
     }
 
     public double rotationsToMeters(double rotations) {
-        double speed = (rotations / MOTOR_ROTATIONS_PER_WHEEL_ROTATION) * WHEEL_CIRCUMFERENCE;
-        return speed;
+        return (rotations / MOTOR_ROTATIONS_PER_WHEEL_ROTATION) * WHEEL_CIRCUMFERENCE;
+    }
+    public double metersToRotations(double rotations) {
+        return (rotations / WHEEL_CIRCUMFERENCE) * MOTOR_ROTATIONS_PER_WHEEL_ROTATION;
     }
 
-    public SwerveModulePosition getSwerveModulePosition(){
-        return new SwerveModulePosition(rotationsToMeters(movementMotor.getPosition()),Rotation2d.fromRadians(getCurrentAngle()));
-    }
 
     public double getCurrentAngle() {
         return (motorRotationsToRadians(rotationEncoder.getPosition()));
