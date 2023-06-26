@@ -6,7 +6,7 @@ import java.io.FileWriter;
 
 public class SimWriter extends SubsystemBase {
 
-    public static boolean sim = false;
+    public static boolean sim = true;
     private FileWriter writer;
     private final Wrist wrist;
     private final Arm arm;
@@ -19,7 +19,7 @@ public class SimWriter extends SubsystemBase {
         this.claw = claw;
         if(sim){
         try {
-            writer = new FileWriter("/home/ibrahim/simAll.txt");
+            writer = new FileWriter(System.getenv("HOME") + "/simAll.txt");
         } catch (Exception e) {
             e.printStackTrace();
         }

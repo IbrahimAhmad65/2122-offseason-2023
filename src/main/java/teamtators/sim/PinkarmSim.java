@@ -29,9 +29,9 @@ public class PinkarmSim {
     public PinkarmSim() {
         j = 1.0 / 3.0 * (ArmConfig.mass1 * ArmConfig.length1 * ArmConfig.length1) + 1.0 / 3.0 * (ArmConfig.mass2 * ArmConfig.length2 * ArmConfig.length2);
         System.out.println(j);
-        armRotationSim = new VariableLengthArmSim(DCMotor.getNEO(1), ArmConfig.motorRotationsPerArmRotation, j, ArmConfig.length1, -Math.PI, Math.PI / 2, ArmConfig.mass1 + ArmConfig.mass2, false);
+        armRotationSim = new VariableLengthArmSim(DCMotor.getNEO(1), ArmConfig.motorRotationsPerArmRotation, j, ArmConfig.length1, -Math.PI, Math.PI / 2, ArmConfig.mass1 + ArmConfig.mass2, true);
 
-        Matrix<N2, N1> x = VecBuilder.fill(-Math.PI/2,0);
+        Matrix<N2, N1> x = VecBuilder.fill(0,0);
         armRotationSim.setState(x);
 
         armExtensionSim = new ExtensionSim(DCMotor.getNeo550(1), ArmConfig.mass2, ArmConfig.length1, ArmConfig.length1 + ArmConfig.length2, 0, false);

@@ -48,7 +48,7 @@ public class PoseStuff implements Supplier<Pose2d>{
             Pose2d fromVision = new Pose2d(new Translation2d(5,5),new Rotation2d(5));
             swerveDrivePoseEstimator.addVisionMeasurement(fromVision, edu.wpi.first.wpilibj.Timer.getFPGATimestamp());
             Pose2d pose = swerveDrivePoseEstimator.getEstimatedPosition();
-            System.out.println("(" + pose.getX() + "," + pose.getY()+")");
+            //System.out.println("(" + pose.getX() + "," + pose.getY()+")");
 
         }
     }

@@ -87,7 +87,7 @@ public class ExtensionSim extends LinearSystemSim<N2, N1, N1> {
         for (int i = 0; i < 100; i++) {
             sim.update(0.02);
 //            System.out.println("("+ Math.cos(angle) * sim.getOutput(0) +","+ Math.sin(angle) * sim.getOutput(0) + ")");
-            System.out.println("(" + 0 + "," + Math.sin(angle) * sim.getTotalLength() + ")");
+            //System.out.println("(" + 0 + "," + Math.sin(angle) * sim.getTotalLength() + ")");
 
         }
     }

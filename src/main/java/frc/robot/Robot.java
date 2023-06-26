@@ -66,7 +66,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     Pose2d pose = robotContainer.getSwerveDrive().getPoseStuff().get();
 
-    System.out.println("(" + pose.getX() + "," + pose.getY()+")");
+    //System.out.println("(" + pose.getX() + "," + pose.getY()+")");
 
 
   }

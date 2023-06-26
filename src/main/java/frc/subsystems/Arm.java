@@ -48,7 +48,8 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
         if(Constants.sim){
-            pinkarmSim.setVoltages(simRotationPID.calculate(pinkarmSim.getAngleRads(), targetAngle), simExtensionPID.calculate(pinkarmSim.getLength(), targetLength));
+            //pinkarmSim.setVoltages(simRotationPID.calculate(pinkarmSim.getAngleRads(), targetAngle), simExtensionPID.calculate(pinkarmSim.getLength(), targetLength));
+            pinkarmSim.setVoltages(0, 0);
             pinkarmSim.periodic();
         }
     }
