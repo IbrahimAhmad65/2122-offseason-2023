@@ -315,12 +315,20 @@ public class VariableLengthArmSim extends LinearSystemSim<N2, N1, N1> {
     public void setMOI(double moi) {
         // recalculating only the relevant entries in the plant
         m_moi = moi;
-        m_plant.getA().set(1, 1,
-                -m_gearing * m_gearing
-                        * m_gearbox.KtNMPerAmp
-                        / (m_gearbox.KvRadPerSecPerVolt * m_gearbox.rOhms * m_moi));
-        m_plant.getB().set(1, 0,
-                m_gearing * m_gearbox.KtNMPerAmp / (m_gearbox.rOhms * m_moi));
+
+        m_plant.getA().set(0, 0, 0);
+        m_plant.getA().set(1, 0, 0);
+        m_plant.getA().set(0, 1, 1);
+        m_plant.getA().set(1, 1, 0);
+
+        m_plant.getB().set(1, 0, 1);
+        m_plant.getB().set(0, 0, 0);
+        // m_plant.getA().set(1, 1,
+        //         -m_gearing * m_gearing
+        //                 * m_gearbox.KtNMPerAmp
+        //                 / (m_gearbox.KvRadPerSecPerVolt * m_gearbox.rOhms * m_moi));
+        // m_plant.getB().set(1, 0,
+        //         m_gearing * m_gearbox.KtNMPerAmp / (m_gearbox.rOhms * m_moi));
     }
 
     public void setGravityAngle(double angleRadians) {
