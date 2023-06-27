@@ -11,7 +11,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.subsystems.PoseStuff;
 
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
+
+private Command m_autonomousCommand;
 
   private RobotContainer robotContainer;
 

@@ -1,117 +1,73 @@
 package teamtators.sim;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
+import org.photonvision.SimVisionSystem;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.constants.VisionConstants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
-public class VisionSimulator implements Supplier<VisionSimulator.VisionSimulatorData> {
-    Pose2d position;
-    double fieldOfView;
-    double angle;
-    private VisionSimulatorData visionSimulatorData;
+public class VisionSimulator extends SubsystemBase {
 
-//    public VisionSimulator(RobotContainer robotContainer) {
-//        super(robotContainer);
-//    }
+        // Simulated Vision System.
+    // Configure these to match your PhotonVision Camera,
+    // pipeline, and LED setup.
+    double camDiagFOV = 170.0; // degrees - assume wide-angle camera
+    double camPitch = VisionConstants.kCameraPitchRadians; // degrees
+    double camHeightOffGround = VisionConstants.kCameraHeightMeters; // meters
+    double maxLEDRange = 20; // meters
+    int camResolutionWidth = 640; // pixels
+    int camResolutionHeight = 480; // pixels
+    double minTargetArea = 10; // square pixels
 
-//    @Override
-//    public void doPeriodic() {
-//        simulate(new Pose2d(2, 2.75, new Rotation2d(0)), 60.0, 180.0);
-//    }
+    double targetWidth = Units.inchesToMeters(41.30) - Units.inchesToMeters(6.70); // meters
+    double targetHeight = Units.inchesToMeters(98.19) - Units.inchesToMeters(81.19); // meters
+    double tgtXPos = Units.feetToMeters(54);
+    double tgtYPos = Units.feetToMeters(27 / 2) - Units.inchesToMeters(43.75) - Units.inchesToMeters(48.0 / 2.0);
+    Pose3d farTargetPose =
+            new Pose3d(
+                    new Translation3d(tgtXPos, tgtYPos, VisionConstants.kTargetHeightMeters),
+                    new Rotation3d(0.0, 0.0, 0.0));
 
-    public void setPosition(Pose2d position) {
-        this.position = position;
-    }
+    SimVisionSystem simVision; 
 
-    public void setFieldOfView(double fieldOfView) {
-        this.fieldOfView = fieldOfView;
-    }
 
-    public void setAngle(double angle) {
-        this.angle = angle;
-    }
+    public VisionSimulator(RobotContainer robotContainer) {
+        simVision = new SimVisionSystem(
+                    "photonvision",
+                    camDiagFOV,
+                    new Transform3d(
+                            new Translation3d(0, 0, camHeightOffGround), new Rotation3d(0, camPitch, 0)),
+                    maxLEDRange,
+                    camResolutionWidth,
+                    camResolutionHeight,
+                    minTargetArea);
 
-    public Pose2d findClosestTag(ArrayList<Pose2d> tags) {
-        Pose2d closestTag = null;
-        double closestDistance = Double.MAX_VALUE;
-
-        for (Pose2d tag : tags) {
-            double distance = position.getTranslation().getDistance(tag.getTranslation());
-            double robotTagAngle = Math.toDegrees(Math.atan2(tag.getTranslation().getY() - position.getTranslation().getY(), tag.getTranslation().getX() - position.getTranslation().getX()));
-            double angleDifference = calculateAngleDifference(angle, robotTagAngle);
-            // System.out.println("AngleDif: " + angleDifference);
-
-            if (distance <= closestDistance && angleDifference <= fieldOfView / 2) {
-                closestTag = tag;
-                closestDistance = distance;
-            }
+        try {
+            simVision.addVisionTargets(AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
-
-        return closestTag;
-    }
-
-    private double calculateAngleDifference(double angle1, double angle2) {
-        double difference = Math.abs(angle1 - angle2) % 360;
-        return difference > 180 ? 360 - difference : difference;
-    }
-
-    private double calculatePointDistance(Pose2d point1, Pose2d point2) {
-        return Math.sqrt(Math.pow(point1.getTranslation().getX() - point2.getTranslation().getX(), 2) + Math.pow(point1.getTranslation().getY() - point2.getTranslation().getY(), 2));
-    }
-    private double calculatePointAngle(Pose2d point1, Pose2d point2) {
-        return Math.toDegrees(Math.atan2(point2.getTranslation().getY() - point1.getTranslation().getY(), point2.getTranslation().getX() - point1.getTranslation().getX()));
-    }
-
-    /*
-     * Simulates the robot's position and field of view to find the closest tag.
-     * @param pos The robot's position
-     * @param fov The robot's field of view
-     * @param angle The robot's angle
-     * @print The closest tag
-     */
-    public VisionSimulatorData simulate(Pose2d botPose, double fov) {
-        Pose2d robotPosition = botPose;
-        double robotFieldOfView = fov;
-        double robotAngle = botPose.getRotation().getRadians();
-
-        ArrayList<Pose2d> tags = new ArrayList<>();
-        tags.add(new Pose2d(0, 1, new Rotation2d()));
-        tags.add(new Pose2d(0, 2, new Rotation2d()));
-        tags.add(new Pose2d(0, 3, new Rotation2d()));
-
-        setPosition(robotPosition);
-        setFieldOfView(robotFieldOfView);
-        setAngle(robotAngle);
-        Pose2d closestTag = findClosestTag(tags);
-
-//        if (closestTag != null) {
-//            System.out.println("Closest tag position: (" + closestTag.getTranslation().getX() + ", " +
-//                    closestTag.getTranslation().getY() + ")");
-//            System.out.println("Closest tag angle: " + calculatePointAngle(robotPosition, closestTag) + " degrees");
-//            System.out.println("Closest tag distance: " + calculatePointDistance(robotPosition, closestTag) + " units");
-//        } else {
-//            System.out.println("No tags within the field of view.");
-//        }
-        VisionSimulatorData visionSimulatorData =new VisionSimulatorData();
-        visionSimulatorData.angle = calculatePointAngle(robotPosition, closestTag);
-        visionSimulatorData.distance = calculatePointDistance(robotPosition, closestTag);
-        visionSimulatorData.tagPos = closestTag;
-        this.visionSimulatorData = visionSimulatorData;
-        return visionSimulatorData;
     }
 
     @Override
-    public VisionSimulatorData get() {
-        return visionSimulatorData;
+    public void simulationPeriodic() {
+        simVision.processFrame(drivetrainSimulator.getPose());
     }
 
-    public class VisionSimulatorData{
-        public double distance;
-        public double angle;
-        public Pose2d tagPos;
-    }
 
 }
