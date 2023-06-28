@@ -5,45 +5,68 @@
   "MainWindow": {
     "GLOBAL": {
       "fps": "120",
-      "height": "900",
+      "height": "720",
       "maximized": "0",
       "style": "0",
       "userScale": "2",
-      "width": "1600",
+      "width": "1280",
       "xpos": "-1",
       "ypos": "-1"
     }
   },
+  "Table": {
+    "0xE56EC1C2,4": {
+      "Column 0  Weight": "1.0000",
+      "Column 1  Weight": "1.0000",
+      "Column 2  Weight": "1.0000",
+      "Column 3  Weight": "1.0000"
+    }
+  },
   "Window": {
+    "###/SmartDashboard/photonvision Sim Field": {
+      "Collapsed": "0",
+      "Pos": "447,54",
+      "Size": "615,568"
+    },
     "###FMS": {
       "Collapsed": "0",
-      "Pos": "6,675",
-      "Size": "336,164"
+      "Pos": "5,540",
+      "Size": "283,146"
     },
     "###Joysticks": {
       "Collapsed": "0",
-      "Pos": "312,581",
-      "Size": "976,82"
+      "Pos": "-13,413",
+      "Size": "796,138"
+    },
+    "###Keyboard 0 Settings": {
+      "Collapsed": "0",
+      "Pos": "489,388",
+      "Size": "300,481"
     },
     "###NetworkTables": {
       "Collapsed": "0",
-      "Pos": "312,346",
-      "Size": "937,231"
+      "Pos": "0,127",
+      "Size": "750,536"
+    },
+    "###NetworkTables Info": {
+      "Collapsed": "0",
+      "Pos": "250,130",
+      "Size": "750,145"
     },
     "###Other Devices": {
       "Collapsed": "0",
-      "Pos": "1281,25",
-      "Size": "312,868"
+      "Pos": "1025,20",
+      "Size": "250,695"
     },
     "###System Joysticks": {
       "Collapsed": "0",
-      "Pos": "6,437",
-      "Size": "232,254"
+      "Pos": "5,350",
+      "Size": "192,218"
     },
     "###Timing": {
       "Collapsed": "0",
-      "Pos": "6,187",
-      "Size": "162,168"
+      "Pos": "5,150",
+      "Size": "135,150"
     },
     "Debug##Default": {
       "Collapsed": "0",
@@ -53,7 +76,7 @@
     "Robot State": {
       "Collapsed": "0",
       "Pos": "5,20",
-      "Size": "109,114"
+      "Size": "92,99"
     }
   }
 }

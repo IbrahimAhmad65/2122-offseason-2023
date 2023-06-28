@@ -8,17 +8,22 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import org.opencv.core.Mat;
+import org.photonvision.EstimatedRobotPose;
+
 import teamtators.sim.VisionSimulator;
 import teamtators.util.Timer;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class PoseStuff implements Supplier<Pose2d>{
     private final SwerveDrivePoseEstimator swerveDrivePoseEstimator;
     public  boolean sim = SimWriter.sim;
     private SwerveDrive swerveDrive;
+    private Vision phoVision;
     private Pose2d pose2d;
     private boolean vision = false;
+    private Timer timer;
 
     public PoseStuff(SwerveDrive swerveDrive){
         this.swerveDrive = swerveDrive;
@@ -33,6 +38,8 @@ public class PoseStuff implements Supplier<Pose2d>{
 //            // vision subsystem
 //        }
         pose2d = new Pose2d();
+        timer = new Timer();
+        timer.restart();
     }
 
     public void tick(){
@@ -45,8 +52,15 @@ public class PoseStuff implements Supplier<Pose2d>{
 //            VisionSimulator.VisionSimulatorData data = visionSimulator.get();
 //            Translation2d deltaPos = new Translation2d();
 //            deltaPos.plus(new Translation2d(data.distance, new Rotation2d(data.angle))).div(-1).plus(data.tagPos.getTranslation());
-            Pose2d fromVision = new Pose2d(new Translation2d(5,5),new Rotation2d(5));
-            swerveDrivePoseEstimator.addVisionMeasurement(fromVision, edu.wpi.first.wpilibj.Timer.getFPGATimestamp());
+            
+            Optional<EstimatedRobotPose> result =
+            phoVision.getEstimatedGlobalPose(swerveDrivePoseEstimator.getEstimatedPosition());
+
+            if (result.isPresent()) {
+                swerveDrivePoseEstimator.addVisionMeasurement(
+                result.get().estimatedPose.toPose2d(), result.get().timestampSeconds);
+            }
+
             Pose2d pose = swerveDrivePoseEstimator.getEstimatedPosition();
             System.out.println("(" + pose.getX() + "," + pose.getY()+")");
 

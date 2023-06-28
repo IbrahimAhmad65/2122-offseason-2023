@@ -19,33 +19,41 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.constants.VisionConstants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.subsystems.SwerveDrive;
 
 public class VisionSimulator extends SubsystemBase {
 
         // Simulated Vision System.
     // Configure these to match your PhotonVision Camera,
     // pipeline, and LED setup.
-    double camDiagFOV = 170.0; // degrees - assume wide-angle camera
-    double camPitch = VisionConstants.kCameraPitchRadians; // degrees
-    double camHeightOffGround = VisionConstants.kCameraHeightMeters; // meters
-    double maxLEDRange = 20; // meters
-    int camResolutionWidth = 640; // pixels
-    int camResolutionHeight = 480; // pixels
-    double minTargetArea = 10; // square pixels
+    private double camDiagFOV = 170.0; // degrees - assume wide-angle camera
+    private double camPitch = VisionConstants.kCameraPitchRadians; // degrees
+    private double camHeightOffGround = VisionConstants.kCameraHeightMeters; // meters
+    private double maxLEDRange = 20; // meters
+    private int camResolutionWidth = 640; // pixels
+    private int camResolutionHeight = 480; // pixels
+    private double minTargetArea = 10; // square pixels
 
-    double targetWidth = Units.inchesToMeters(41.30) - Units.inchesToMeters(6.70); // meters
-    double targetHeight = Units.inchesToMeters(98.19) - Units.inchesToMeters(81.19); // meters
-    double tgtXPos = Units.feetToMeters(54);
-    double tgtYPos = Units.feetToMeters(27 / 2) - Units.inchesToMeters(43.75) - Units.inchesToMeters(48.0 / 2.0);
-    Pose3d farTargetPose =
+    private double targetWidth = Units.inchesToMeters(41.30) - Units.inchesToMeters(6.70); // meters
+    private double targetHeight = Units.inchesToMeters(98.19) - Units.inchesToMeters(81.19); // meters
+    private double tgtXPos = Units.feetToMeters(54);
+    private double tgtYPos = Units.feetToMeters(27 / 2) - Units.inchesToMeters(43.75) - Units.inchesToMeters(48.0 / 2.0);
+    private Pose3d farTargetPose =
             new Pose3d(
                     new Translation3d(tgtXPos, tgtYPos, VisionConstants.kTargetHeightMeters),
                     new Rotation3d(0.0, 0.0, 0.0));
 
-    SimVisionSystem simVision; 
+    private SimVisionSystem simVision; 
+
+    private SwerveDrive swerveDrive;
+
+
 
 
     public VisionSimulator(RobotContainer robotContainer) {
+
+        swerveDrive = robotContainer.getSwerveDrive();
+
         simVision = new SimVisionSystem(
                     "photonvision",
                     camDiagFOV,
@@ -66,7 +74,7 @@ public class VisionSimulator extends SubsystemBase {
 
     @Override
     public void simulationPeriodic() {
-        simVision.processFrame(drivetrainSimulator.getPose());
+        simVision.processFrame(swerveDrive.getPoseStuff().getPose2d());
     }
 
 

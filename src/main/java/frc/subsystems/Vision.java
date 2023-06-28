@@ -43,6 +43,11 @@ public class Vision extends SubsystemBase  {
     //You should be updating your drivetrain pose estimator 
     //with the result from the RobotPoseEstimator every loop using addVisionMeasurement()
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
+        if (photonPoseEstimator == null) {
+            // The field layout failed to load, so we cannot estimate poses.
+            return Optional.empty();
+        }
+        
         photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
         return photonPoseEstimator.update();
     }
