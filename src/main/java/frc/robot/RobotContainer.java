@@ -20,6 +20,9 @@ import frc.subsystems.*;
 import teamtators.sim.DriveSim;
 import teamtators.util.JoystickModifiers;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class RobotContainer {
   private final Arm arm;
   private final SimWriter simWriter;
@@ -34,9 +37,14 @@ public class RobotContainer {
   public SequentialCommandGroup armDoThings;
   public SequentialCommandGroup pickFromChamber;
 
-  public RobotContainer() {
+  private PoseStuff poseStuff;
+  private ExecutorService fixedThreadPool;
 
+  public RobotContainer() {
+    fixedThreadPool = Executors.newFixedThreadPool(1);
     swerveDrive = new SwerveDrive(this);
+    poseStuff = new PoseStuff(swerveDrive);
+    fixedThreadPool.submit(poseStuff);
     operatorInterface = new OperatorInterface(swerveDrive.getGyro());
     vision = new Vision();
     driveSim = new DriveSim(this);
