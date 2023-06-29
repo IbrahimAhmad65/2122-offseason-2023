@@ -13,8 +13,8 @@ import teamtators.util.Timer;
 
 import java.util.function.Supplier;
 
-public class PoseStuff implements Supplier<Pose2d>{
-    private final SwerveDrivePoseEstimator swerveDrivePoseEstimator;
+public class PoseStuff implements Supplier<Pose2d>, Runnable{
+    private  SwerveDrivePoseEstimator swerveDrivePoseEstimator;
     public  boolean sim = SimWriter.sim;
     private SwerveDrive swerveDrive;
     private Pose2d pose2d;
@@ -22,10 +22,10 @@ public class PoseStuff implements Supplier<Pose2d>{
 
     public PoseStuff(SwerveDrive swerveDrive){
         this.swerveDrive = swerveDrive;
-        swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(swerveDrive.getSwerveDriveKinematics(),
-                swerveDrive.getSwerveDriveRotation(), new SwerveModulePosition[]{new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition()},new Pose2d()
-//                ,VecBuilder.fill(0.9, 0.9, 0.9), VecBuilder.fill(0.001, 0.001, 0.001)
-                );
+//        swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(swerveDrive.getSwerveDriveKinematics(),
+//                swerveDrive.getSwerveDriveRotation(), new SwerveModulePosition[]{new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition()},new Pose2d()
+////                ,VecBuilder.fill(0.9, 0.9, 0.9), VecBuilder.fill(0.001, 0.001, 0.001)
+//                );
 //
 //        if(sim){
 //            visionSimulator = new VisionSimulator();
@@ -36,7 +36,15 @@ public class PoseStuff implements Supplier<Pose2d>{
     }
 
     public void tick(){
-       pose2d = swerveDrivePoseEstimator.update(swerveDrive.getSwerveDriveRotation(),swerveDrive.getSwerveModulePositions());
+        if(swerveDrive == null){
+            return;
+        } else if(swerveDrivePoseEstimator == null){
+            swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(swerveDrive.getSwerveDriveKinematics(),
+                    swerveDrive.getSwerveDriveRotation(), new SwerveModulePosition[]{new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition()},new Pose2d()
+//                ,VecBuilder.fill(0.9, 0.9, 0.9), VecBuilder.fill(0.001, 0.001, 0.001)
+            );
+        }
+          pose2d = swerveDrivePoseEstimator.update(swerveDrive.getSwerveDriveRotation(),swerveDrive.getSwerveModulePositions());
 
 //        System.out.println(swerveDrive.getSwerveModulePositions()[0].distanceMeters);
 
@@ -55,8 +63,22 @@ public class PoseStuff implements Supplier<Pose2d>{
     public Pose2d getPose2d(){
         return swerveDrivePoseEstimator.getEstimatedPosition();
     }
+    @Override
+    public void run(){
+        while (Thread.currentThread().isAlive()){
+            tick();
+//            System.out.println("herew");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
-
+    public void setSwerveDrive(SwerveDrive swerveDrive){
+        this.swerveDrive = swerveDrive;
+    }
     @Override
     public Pose2d get() {
         return swerveDrivePoseEstimator.getEstimatedPosition();

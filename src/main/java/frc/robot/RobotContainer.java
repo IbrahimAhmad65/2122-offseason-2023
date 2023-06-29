@@ -19,6 +19,9 @@ import frc.constants.OperatorInterfaceConstants;
 import frc.subsystems.*;
 import teamtators.util.JoystickModifiers;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class RobotContainer {
   private final Arm arm;
   private final SimWriter simWriter;
@@ -30,9 +33,13 @@ public class RobotContainer {
 private OperatorInterface operatorInterface;
   public SequentialCommandGroup armDoThings;
   public SequentialCommandGroup pickFromChamber;
+  private PoseStuff poseStuff;
+  private ExecutorService fixedThreadPool;
   public RobotContainer() {
-
+    fixedThreadPool = Executors.newFixedThreadPool(1);
     swerveDrive = new SwerveDrive(this);
+    poseStuff = new PoseStuff(swerveDrive);
+    fixedThreadPool.submit(poseStuff);
     operatorInterface = new OperatorInterface(swerveDrive.getGyro());
     claw = new Claw();
     arm = new Arm();

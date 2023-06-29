@@ -103,7 +103,6 @@ public class SwerveDrive extends SubsystemBase implements Consumer<ChassisSpeeds
         gyro = new TatorPigeon(0, SwerveConstants.SwerveModule.canivoreBusName);
         gyro.zero();
         // Shuffleboard stuff:
-        poseStuff = new PoseStuff(this);
     }
 
 
