@@ -1,0 +1,111 @@
+{
+  "Name": "ConeConeCommunity",
+  "thetaOffset" : 90,
+  "Closed": "False",
+  "ControlPoints": [
+    {
+      "X": -5.9,
+      "Y": .85,
+      "Vx": 4,
+      "Vy": 0,
+      "order": 5
+    },
+    {
+      "X": -.7,
+      "Y": .4,
+      "Vx": 3,
+      "Vy": 0,
+      "order": 1
+    },
+    {
+     "X": -.5,
+     "Y": .25,
+     "Vx": -4,
+     "Vy": 0,
+     "order": 5
+     },
+    {
+       "X" : -4.7,
+        "Y":  .7,
+            "Vx": -5,
+            "Vy": 0,
+            "order": 5
+     },
+  ],
+  "RequiredPoints": [
+    {
+      "X": -5.8,
+            "Y": .85,
+      "betweenWayPoints": "AUTO",
+      "args": {
+        "angle": 0,
+        "angle-GUI": 45.0
+      },
+      "isNeeded": false
+    },
+    {
+        "X" : -4.7,
+                 "Y":  .7,
+      "betweenWayPoints": "AUTO",
+      "args": {
+        "angle": 0.0,
+        "angle-GUI": 45.0
+      },
+      "isNeeded": false
+    }
+  ],
+  "WayPoints": [
+    {
+      "X": -5.8,
+            "Y": .85,
+      "Speed": 1.2,
+      "Command": "autoPlaceConeInitHigh",
+      "betweenWayPoints": "AUTO",
+      "args": {},
+      "isNeeded": false
+    },
+    {
+       "X": -.7,
+       "Y": .5,
+       "Speed": .8,
+       "Command": "none",
+       "betweenWayPoints": "AUTO",
+       "args": {},
+       "isNeeded": false
+    },
+
+
+     {
+        "X": -.5,
+              "Y": .25,
+              "Speed": .8,
+              "Command": "none",
+              "betweenWayPoints": "AUTO",
+              "args": {},
+              "isNeeded": false
+        },
+
+    {
+                "X": -5.1,
+                "Y": 1,
+                  "Speed": 1.2,
+                  "Command": "pickCone",
+                  "betweenWayPoints": "AUTO",
+                  "args": {},
+                  "isNeeded": false
+            },
+
+
+    {
+           "X" : -3,
+             "Y":  -.7,
+              "Speed": 1.2,
+              "Command": "unpick",
+              "betweenWayPoints": "AUTO",
+              "args": {},
+              "isNeeded": false
+        },
+
+
+  ]
+}

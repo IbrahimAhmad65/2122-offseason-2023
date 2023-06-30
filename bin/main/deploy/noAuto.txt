@@ -1,0 +1,63 @@
+{
+  "Name": "noAuto",
+  "Closed": "False",
+  "thetaOffset" : 0,
+  "ControlPoints": [
+    {
+      "X": 0,
+      "Y": .1,
+      "Vx": -1.1330009229857414,
+      "Vy": 0,
+      "order": 1
+    },
+    {
+      "X": 0,
+      "Y": 0,
+      "Vx": 2,
+      "Vy": 1,
+      "order": 1
+    },
+  ],
+  "RequiredPoints": [
+    {
+      "X": 0,
+      "Y": .1,
+      "betweenWayPoints": "AUTO",
+      "args": {
+        "angle": 0.7853981633974483,
+        "angle-GUI": 45.0
+      },
+      "isNeeded": false
+    },
+    {
+      "X": 0,
+            "Y": 0,
+      "betweenWayPoints": "AUTO",
+      "args": {
+        "angle": 0.0,
+        "angle-GUI": 45.0
+      },
+      "isNeeded": false
+    }
+  ],
+  "WayPoints": [
+    {
+      "X": 0,
+      "Y": .1,
+      "Speed": 0,
+      "Command": "None",
+      "betweenWayPoints": "AUTO",
+      "args": {},
+      "isNeeded": false
+    },
+    {
+          "X": 0,
+          "Y": .05,
+           "Speed": 0,
+                "Command": "None",
+                "betweenWayPoints": "AUTO",
+                "args": {},
+                "isNeeded": false
+        },
+  ]
+}
