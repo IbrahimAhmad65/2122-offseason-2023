@@ -17,6 +17,7 @@ import frc.commands.BaseDrive;
 import frc.commands.WristToAngle;
 import frc.constants.OperatorInterfaceConstants;
 import frc.subsystems.*;
+import teamtators.sim.DriveSim;
 import teamtators.util.JoystickModifiers;
 
 import java.util.concurrent.ExecutorService;
@@ -29,24 +30,31 @@ public class RobotContainer {
   private final Claw claw ;
 
   public final BaseDrive teleDrive;
+  private Vision vision;
+  private DriveSim driveSim;
   private SwerveDrive swerveDrive;
-private OperatorInterface operatorInterface;
+  private OperatorInterface operatorInterface;
   public SequentialCommandGroup armDoThings;
   public SequentialCommandGroup pickFromChamber;
+
   private PoseStuff poseStuff;
   private ExecutorService fixedThreadPool;
+
   public RobotContainer() {
     fixedThreadPool = Executors.newFixedThreadPool(1);
     swerveDrive = new SwerveDrive(this);
     poseStuff = new PoseStuff(swerveDrive);
     fixedThreadPool.submit(poseStuff);
     operatorInterface = new OperatorInterface(swerveDrive.getGyro());
+    vision = new Vision();
+    driveSim = new DriveSim(this);
+
     claw = new Claw();
     arm = new Arm();
     wrist = new Wrist();
     simWriter = new SimWriter(arm,wrist,claw);
     teleDrive = new BaseDrive(swerveDrive,() -> {
-      return ChassisSpeeds.fromFieldRelativeSpeeds(1,1,0,new Rotation2d(0));
+      return ChassisSpeeds.fromFieldRelativeSpeeds(0.1,0.1,0,new Rotation2d(0));
     });
     pickFromChamber = new SequentialCommandGroup(
             new ArmGoToPosition(arm,-Math.PI/2-Math.PI/6,.8),
@@ -74,6 +82,10 @@ private OperatorInterface operatorInterface;
 
   public SimWriter getSimWriter() {
     return simWriter;
+  }
+
+  public Vision getVision() {
+    return vision;
   }
 
 

@@ -8,9 +8,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import org.opencv.core.Mat;
+import org.photonvision.EstimatedRobotPose;
+
 import teamtators.sim.VisionSimulator;
 import teamtators.util.Timer;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class PoseStuff implements Supplier<Pose2d>, Runnable{
@@ -18,6 +21,7 @@ public class PoseStuff implements Supplier<Pose2d>, Runnable{
     public  boolean sim = SimWriter.sim;
     private SwerveDrive swerveDrive;
     private Pose2d pose2d;
+    private Vision phoVision;
     private boolean vision = false;
 
     public PoseStuff(SwerveDrive swerveDrive){
@@ -53,10 +57,15 @@ public class PoseStuff implements Supplier<Pose2d>, Runnable{
 //            VisionSimulator.VisionSimulatorData data = visionSimulator.get();
 //            Translation2d deltaPos = new Translation2d();
 //            deltaPos.plus(new Translation2d(data.distance, new Rotation2d(data.angle))).div(-1).plus(data.tagPos.getTranslation());
-            Pose2d fromVision = new Pose2d(new Translation2d(5,5),new Rotation2d(5));
-            swerveDrivePoseEstimator.addVisionMeasurement(fromVision, edu.wpi.first.wpilibj.Timer.getFPGATimestamp());
-            Pose2d pose = swerveDrivePoseEstimator.getEstimatedPosition();
-            System.out.println("(" + pose.getX() + "," + pose.getY()+")");
+            
+        Optional<EstimatedRobotPose> result =
+        phoVision.getEstimatedGlobalPose(swerveDrivePoseEstimator.getEstimatedPosition());
+
+        if (result.isPresent()) {
+            swerveDrivePoseEstimator.addVisionMeasurement(result.get().estimatedPose.toPose2d(), result.get().timestampSeconds);
+        }
+        Pose2d pose = swerveDrivePoseEstimator.getEstimatedPosition();
+        System.out.println("(" + pose.getX() + "," + pose.getY()+")");
 
         }
     }
