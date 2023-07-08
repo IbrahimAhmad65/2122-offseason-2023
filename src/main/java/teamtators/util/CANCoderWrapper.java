@@ -1,9 +1,10 @@
 package teamtators.util;
 
-import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix6.hardware.CANcoder;
+
 import frc.constants.SwerveConstants;
 
-public class CANCoderWrapper extends CANCoder {
+public class CANCoderWrapper extends CANcoder {
 
     private double conversionFactor;
 
@@ -20,7 +21,7 @@ public class CANCoderWrapper extends CANCoder {
     }
 
     public double getConvertedAbsolute() {
-        return (conversionFactor * (super.getAbsolutePosition()));
+        return (conversionFactor * (super.getAbsolutePosition().getValue()));
     }
 
     public void setInverted(boolean inversion) {

@@ -1,9 +1,15 @@
 package frc.subsystems;
 
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+// import com.ctre.phoenix.motorcontrol.NeutralMode;
+// import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+// import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.Matrix;
@@ -60,7 +66,7 @@ public class SwerveModule {
     // Hardware
     private volatile CANCoderWrapper absoluteEncoder;     // Encoder used for checking rotation angles
     private TatorCANSparkMax rotationMotor;          // NEO550 is rotation motor
-    private TalonFXWrapper movementMotor;      // Talon FX is the movement motor
+    private TalonFX movementMotor;      // Talon FX is the movement motor
     private RelativeEncoder rotationEncoder;
     private double direction;
 
@@ -81,9 +87,11 @@ public class SwerveModule {
 
     boolean mainBot = true;
 
-    public SwerveModule(int module, TalonFXWrapper driveMotor, TatorCANSparkMax rotationMotor, CANCoderWrapper canCoder) {
+    public SwerveModule(int module, TalonFX driveMotor, TatorCANSparkMax rotationMotor, CANCoderWrapper canCoder) {
         this.moduleNumber = module;
-        driveMotor.setNeutralMode(NeutralMode.Brake);
+        TalonFXConfiguration conf = new TalonFXConfiguration();
+        conf.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        driveMotor.getConfigurator().apply(conf);
         movementMotor = driveMotor;
         this.rotationMotor = rotationMotor;
          rotationMotor.setInverted(false);
@@ -104,7 +112,11 @@ public class SwerveModule {
         canPID = new SwerveCANPIDRotationController(rotationMotor.getCanSparkMax(), MOTOR_ROTATIONS_PER_MODULE_ROTATION);
         canPID.setP(1);
         canPID.setD(.05);
-        movementMotor.configurePID(.05, 0.0, 0.0, 1.0, 0.0 );
+        Slot0Configs conf = new Slot0Configs();
+        conf.kP = .05;
+        conf.kI = 0;
+        conf.kD = 0;
+        movementMotor.getConfigurator().apply(conf);
         calibrate();
     }
 
@@ -117,14 +129,14 @@ public class SwerveModule {
 
         // double currentValue = absoluteEncoder.getConvertedAbsolute() + offsets[moduleNumber];
         // System.out.println(currentValue);
-        absoluteEncoder.setPosition(absoluteEncoder.getAbsolutePosition());
-        System.out.println((absoluteEncoder.getAbsolutePosition()/360.0) * MOTOR_ROTATIONS_PER_MODULE_ROTATION);
-        rotationEncoder.setPosition((absoluteEncoder.getAbsolutePosition()/360.0) * MOTOR_ROTATIONS_PER_MODULE_ROTATION);
+        absoluteEncoder.setPosition(absoluteEncoder.getAbsolutePosition().getValue());
+        System.out.println((absoluteEncoder.getAbsolutePosition().getValue()/360.0) * MOTOR_ROTATIONS_PER_MODULE_ROTATION);
+        rotationEncoder.setPosition((absoluteEncoder.getAbsolutePosition().getValue()/360.0) * MOTOR_ROTATIONS_PER_MODULE_ROTATION);
     }
 
     public void stop() {
         canPID.setReference(rotationEncoder.getPosition(), CANSparkMax.ControlType.kPosition);
-        movementMotor.stop();
+        movementMotor.set(0);
         rotationMotor.stop();
     }
 
@@ -145,12 +157,12 @@ public class SwerveModule {
             case Enabled:
                 if (mag != 0) {
                     direction = canPID.setOptimizedPositionNew(angle);
-                    movementMotor.setVelocity(metersToRotations(mag)  * direction * baseSpeed());
+                    movementMotor.setControl(new VelocityDutyCycle(metersToRotations(mag) * direction * baseSpeed()));
 
                 } else {
                     canPID.setReference(rotationEncoder.getPosition(), CANSparkMax.ControlType.kPosition);
                     // rotationMotor.stopMotor();
-                    movementMotor.stop();
+                    movementMotor.set(0);
                 }
                 break;
             case Disabled:
@@ -170,7 +182,7 @@ public class SwerveModule {
 //            System.out.println("distance: " +distance);
             return new SwerveModulePosition(distance, new Rotation2d(angle));
         }
-        return new SwerveModulePosition(rotationsToMeters(movementMotor.getPosition()), new Rotation2d(getCurrentAngle()));
+        return new SwerveModulePosition(rotationsToMeters(movementMotor.getPosition().getValue()), new Rotation2d(getCurrentAngle()));
     }
 
     public void printPosition() {
@@ -228,7 +240,7 @@ public class SwerveModule {
     }
 
     public double getVelocity() {
-        return rotationsToInches(movementMotor.getVelocity());
+        return rotationsToInches(movementMotor.getVelocity().getValue());
     }
 
 
@@ -256,13 +268,31 @@ public class SwerveModule {
 
 
     public void configureCurrentRampAuto(){
-        movementMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 40,50,.001));
-        movementMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40,50,.001));
+        CurrentLimitsConfigs conf = new CurrentLimitsConfigs();
+
+        conf.StatorCurrentLimit = 40;
+        conf.StatorCurrentLimitEnable = true;
+
+        conf.SupplyCurrentLimit = 40;
+        conf.SupplyCurrentThreshold = 50;
+        conf.SupplyCurrentLimitEnable = true;
+        conf.SupplyTimeThreshold = .001;
+
+        movementMotor.getConfigurator().apply(conf);
     }
 
     public void configureCurrentRampTele(){
-        movementMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 55,65,.001));
-        movementMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40,50,.001));
+        CurrentLimitsConfigs conf = new CurrentLimitsConfigs();
+
+        conf.StatorCurrentLimit = 55;
+        conf.StatorCurrentLimitEnable = true;
+
+        conf.SupplyCurrentLimit = 40;
+        conf.SupplyCurrentThreshold = 50;
+        conf.SupplyCurrentLimitEnable = true;
+        conf.SupplyTimeThreshold = .001;
+
+        movementMotor.getConfigurator().apply(conf);
     }
 
 

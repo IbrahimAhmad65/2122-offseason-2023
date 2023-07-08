@@ -1,6 +1,6 @@
 package teamtators.util;
 
-import com.ctre.phoenix.sensors.Pigeon2;
+import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 
@@ -21,11 +21,11 @@ public class TatorPigeon extends Pigeon2 {
     }
 
     public void zero() {
-        offset = getYaw() + 90;
+        offset = getYaw().getValue() + 90;
     }
 
     public double getYawD() {
-        return 270 - getYaw() + offset;
+        return 270 - getYaw().getValue() + offset;
     }
 
     private void updateYaw() {
@@ -34,7 +34,7 @@ public class TatorPigeon extends Pigeon2 {
 
 
     public double getYawContinuous() {
-        return -getYaw() + offset - 90;
+        return -getYaw().getValue() + offset - 90;
     }
 
     public boolean isConnected() {

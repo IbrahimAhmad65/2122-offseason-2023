@@ -1,6 +1,7 @@
 package frc.subsystems;
 
 
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -220,10 +221,10 @@ public class SwerveDrive extends SubsystemBase implements Consumer<ChassisSpeeds
         }
 
 
-        module0 = new SwerveModule(0, new TalonFXWrapper(1, SwerveConstants.SwerveModule.canivoreBusName), new TatorCANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless), encoder0);
-        module1 = new SwerveModule(1, new TalonFXWrapper(2, SwerveConstants.SwerveModule.canivoreBusName), new TatorCANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless), encoder1);
-        module3 = new SwerveModule(3, new TalonFXWrapper(3, SwerveConstants.SwerveModule.canivoreBusName), new TatorCANSparkMax(7, CANSparkMaxLowLevel.MotorType.kBrushless), encoder2);
-        module2 = new SwerveModule(2, new TalonFXWrapper(4, SwerveConstants.SwerveModule.canivoreBusName), new TatorCANSparkMax(8, CANSparkMaxLowLevel.MotorType.kBrushless), encoder3);
+        module0 = new SwerveModule(0, new TalonFX(1, SwerveConstants.SwerveModule.canivoreBusName), new TatorCANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless), encoder0);
+        module1 = new SwerveModule(1, new TalonFX(2, SwerveConstants.SwerveModule.canivoreBusName), new TatorCANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless), encoder1);
+        module3 = new SwerveModule(3, new TalonFX(3, SwerveConstants.SwerveModule.canivoreBusName), new TatorCANSparkMax(7, CANSparkMaxLowLevel.MotorType.kBrushless), encoder2);
+        module2 = new SwerveModule(2, new TalonFX(4, SwerveConstants.SwerveModule.canivoreBusName), new TatorCANSparkMax(8, CANSparkMaxLowLevel.MotorType.kBrushless), encoder3);
 
         moduleArray = new SwerveModule[]{module0, module1, module2, module3};
     }
